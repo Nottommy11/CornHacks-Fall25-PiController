@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 // const dotenv = require("dotenv");
 const { startSerialListener } = require("./src/serialListener.js");
-dotenv.config();
+// dotenv.config();
 
 const app = express();
 app.use(cors());
