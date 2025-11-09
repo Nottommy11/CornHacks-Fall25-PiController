@@ -19,20 +19,20 @@ function startSerialListener() {
 
         // Format is metric:value
         if (line.includes(":")) {
-            const [metricType, value] = line.split(":");
+            const [metricId, value] = line.split(":");
 
             try {
                 const res = await fetch(API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        metricType,
+                        metricId,
                         value: parseFloat(value),
                     }),
                 });
 
                 console.log(
-                    `[API] Sent ${metricType}:${value} -> ${res.status}`
+                    `[API] Sent ${metricId}:${value} -> ${res.status}`
                 );
             } catch (err) {
                 console.error("[API Error]", err.message);
