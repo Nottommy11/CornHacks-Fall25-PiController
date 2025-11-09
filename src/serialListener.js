@@ -17,23 +17,25 @@ function startSerialListener() {
 
         console.log(`[Serial] Received: ${line}`);
 
-        // Format is metric:value
         if (line.includes(":")) {
-            const [metricId, value] = line.split(":");
+            const [metric, rawValue] = line.split(":");
+            const value = isNaN(parseFloat(rawValue))
+                ? rawValue
+                : parseFloat(rawValue);
+
+            const payload = {
+                metric,
+                value,
+            };
 
             try {
                 const res = await fetch(API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        metricId,
-                        value: parseFloat(value),
-                    }),
+                    body: JSON.stringify(payload),
                 });
 
-                console.log(
-                    `[API] Sent ${metricId}:${value} -> ${res.status}`
-                );
+                console.log(`[API] Sent ${metric}:${value} -> ${res.status}`);
             } catch (err) {
                 console.error("[API Error]", err.message);
             }
