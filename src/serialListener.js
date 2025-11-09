@@ -4,6 +4,7 @@ const fetch = require("node-fetch");
 const SERIAL_PORT = "/dev/ttyUSB0";
 const BAUD_RATE = 115200;
 const API_URL = "https://cornhacks-fall25-api.onrender.com/api/data/";
+const LED_API_URL = "https://cornhacks-fall25-api.onrender.com/api/setLed/";
 
 function startSerialListener() {
     const port = new SerialPort({ path: SERIAL_PORT, baudRate: BAUD_RATE });
@@ -14,6 +15,28 @@ function startSerialListener() {
     parser.on("data", async (line) => {
         line = line.trim();
         if (!line || line === "---") return;
+
+        if (line.contains("=")) {
+            console.log(`[Serial] Received: ${line}`);
+            ledValue = line.split("=")[1];
+            const payload = {
+                ledValue,
+            };
+
+            try {
+                const res = await fetch(LED_API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                console.log(
+                    `[API] Sent LED Status:${ledValue} -> ${res.status}`
+                );
+            } catch (err) {
+                console.error("[API Error]", err.message);
+            }
+        }
 
         console.log(`[Serial] Received: ${line}`);
 
@@ -35,7 +58,9 @@ function startSerialListener() {
                     body: JSON.stringify(payload),
                 });
 
-                console.log(`[API] Sent ${metricType}:${value} -> ${res.status}`);
+                console.log(
+                    `[API] Sent ${metricType}:${value} -> ${res.status}`
+                );
             } catch (err) {
                 console.error("[API Error]", err.message);
             }
