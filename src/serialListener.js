@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 
 const SERIAL_PORT = "/dev/ttyUSB0";
 const BAUD_RATE = 115200;
-const API_URL = "https://cornhacks-fall25-api.onrender.com/api/nodes/";
+const API_URL = "https://cornhacks-fall25-api.onrender.com/api/data/";
 
 function startSerialListener() {
     const port = new SerialPort({ path: SERIAL_PORT, baudRate: BAUD_RATE });
